@@ -44,7 +44,7 @@
       </li>
       <li>
         <a href="https://github.com/DariusCornescu/Sem2-PTh"> 
-          :Clubs:  Probability Theory 
+          :clubs:  Probability Theory 
         </a>
       </li>
       <li>
