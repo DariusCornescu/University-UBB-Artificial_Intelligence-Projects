@@ -1,7 +1,7 @@
 # University-UBB-Artificial_Intelligence-Projects
 
 <ul>
-    <li>open_file_folder: Semester 1
+    <li>:open_file_folder: Semester 1
         <ul>
             <li>
                 <a href="https://github.com/DariusCornescu/Sem1-Algebra">
