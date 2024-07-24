@@ -10,22 +10,22 @@
             </li>
             <li>
                 <a href="https://github.com/DariusCornescu/Sem1-LogicAI">
-                :clubs: Computational Logic
+                :warning: Computational Logic
                 </a>
             </li>
             <li>
                 <a href="https://github.com/DariusCornescu/Sem1-FP">
-                :clubs: Fundamental Algorithms
+                :trollface: Fundamental Algorithms
                 </a>
             </li>
             <li>
                 <a href="https://github.com/DariusCornescu/Sem1-Calculus">
-                :clubs: Calculus
+                :heart: Calculus
                 </a>
             </li>
             <li>
                 <a href="https://github.com/DariusCornescu/Sem1-SolvingProb">
-                :clubs: Advanced Methodsof Programming 
+                :snake: Advanced Methodsof Programming 
                 </a>
             </li>
         </ul>
@@ -34,7 +34,7 @@
     <ul>
       <li>
         <a href="https://github.com/DariusCornescu/Sem2-DSA"> 
-          :candy:  Data Structures and Algorithms 
+          :skull:  Data Structures and Algorithms 
         </a>
       </li>
       <li>
@@ -44,22 +44,22 @@
       </li>
       <li>
         <a href="https://github.com/DariusCornescu/Sem2-PTh"> 
-          🔱:  Probability Theory 
+          :Clubs:  Probability Theory 
         </a>
       </li>
       <li>
         <a href="https://github.com/DariusCornescu/Sem2-GA"> 
-          🍇:  Graph Algorithms 
+          :clubs:  Graph Algorithms 
         </a>
       </li>
       <li>
         <a href="https://github.com/DariusCornescu/Sem2-Geometry"> 
-          :boom: Geometry 
+          :warning: Geometry 
         </a>
       </li>
       <li>
         <a href="https://github.com/DariusCornescu/Sem2-OS"> 
-          :boom: Operating Systems
+          :sparkling_heart: Operating Systems
         </a>
       </li>
     </ul>
