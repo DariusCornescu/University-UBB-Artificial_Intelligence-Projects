@@ -1,0 +1,140 @@
+def is_linearly_independent(vectors, n):
+    """
+    Checks if a set of vectors is linearly independent in Z2^n.
+
+    Args:
+    vectors (list of lists): List of vectors to check for linear independence.
+    n (int): Dimension of the vector space (number of components in each vector).
+
+    Returns:
+    bool: True if the vectors are linearly independent, False otherwise.
+    """
+    # Number of vectors being checked
+    m = len(vectors)
+
+    # Check all non-empty combinations of vectors
+    for i in range(1, 1 << m):
+        combination = [0] * n  # Initialize a zero vector of dimension n
+        for j in range(m):
+            if i & (1 << j):  # If j-th bit is set in i, include vectors[j]
+                for k in range(n):
+                    combination[k] ^= vectors[j][k]  # Perform XOR operation (mod 2 addition)
+
+        # If combination is the zero vector, the set is linearly dependent
+        if combination == [0] * n and i != 0:
+            return False
+
+    return True
+
+
+def rref(matrix):
+    """
+    Computes the Row-Reduced Echelon Form (RREF) of a matrix over Z2.
+
+    Args:
+    matrix (list of lists): The matrix to reduce.
+
+    Returns:
+    list of lists: The matrix in its RREF.
+    """
+    A = [row[:] for row in matrix]  # Copy the matrix
+    lead = 0
+    rowCount = len(A)
+    columnCount = len(A[0])
+
+    for r in range(rowCount):
+        if lead >= columnCount:
+            return A
+        i = r
+        while A[i][lead] == 0:  # Find a non-zero pivot
+            i += 1
+            if i == rowCount:
+                i = r
+                lead += 1
+                if columnCount == lead:
+                    return A
+
+        # Swap rows to bring pivot to the current row
+        A[i], A[r] = A[r], A[i]
+
+        # Scale the pivot row so that the pivot is 1 (not necessary in Z2, all elements are 0 or 1)
+        A[r] = [(mrx % 2) for mrx in A[r]]
+
+        # Zero out the other entries in the pivot column
+        for i in range(rowCount):
+            if i != r:
+                lv = A[i][lead]
+                A[i] = [(iv - lv * rv) % 2 for rv, iv in zip(A[r], A[i])]
+
+        lead += 1
+
+    return A
+
+
+def generate_subspaces(vectors, n, k, selected_vectors):
+    """
+    Generates all k-dimensional subspaces that are linearly independent.
+
+    Args:
+    vectors (list of lists): List of vectors in the vector space.
+    n (int): Dimension of the vector space.
+    k (int): Dimension of the subspaces to generate.
+    selected_vectors (list of lists): Currently selected vectors for the subspace.
+
+    Returns:
+    list of lists: List of all k-dimensional subspaces.
+    """
+    if len(selected_vectors) == k:
+        # Return the subspace if it is linearly independent
+        return [selected_vectors] if is_linearly_independent(selected_vectors, n) else []
+
+    subspaces = []
+
+    # Generate subspaces by recursively adding vectors
+    for i in range(len(vectors)):
+        new_selected_vectors = selected_vectors + [vectors[i]]
+        new_vectors = vectors[i + 1:]
+        subspaces += generate_subspaces(new_vectors, n, k, new_selected_vectors)
+
+    return subspaces
+
+
+def main():
+    """
+    Main function to calculate and display all k-dimensional subspaces of Z2^n.
+    """
+    try:
+        # Read inputs for k and n
+        k = int(input("Enter a natural number k (dimension of subspace): "))
+        n = int(input("Enter a natural number n (dimension of vector space, k ≤ n ≤ 6): "))
+
+        # Validate input values
+        if k < 1 or n < k or n > 6:
+            print("Invalid input. Please ensure that 1 ≤ k ≤ n ≤ 6.")
+            return
+
+        # Generate all vectors in Z2^n
+        vectors = [[(i >> j) & 1 for j in range(n)] for i in range(1 << n)]
+
+        # Generate all k-dimensional subspaces
+        subspaces = generate_subspaces(vectors, n, k, [])
+
+        # Use RREF to ensure uniqueness of subspaces
+        unique_subspaces = set()
+        for subspace in subspaces:
+            rref_subspace = tuple(map(tuple, rref(subspace)))
+            unique_subspaces.add(rref_subspace)
+
+        # Display the results
+        print(
+            f"\nThe number of {k}-dimensional subspaces of the vector space Z2^{n} over Z2 is {len(unique_subspaces)}.")
+        print("A basis for each such subspace is:")
+        for idx, subspace in enumerate(unique_subspaces, 1):
+            print(f"Subspace {idx}: {subspace}")
+
+    except ValueError:
+        print("Invalid input. Please enter valid integers.")
+
+
+if __name__ == "__main__":
+    main()

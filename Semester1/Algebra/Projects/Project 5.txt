@@ -1,0 +1,142 @@
+import time
+from colorama import Fore, Style, init
+
+# Initialize colorama for cross-platform color support (especially on Windows)
+init()
+
+
+def get_input_value(prompt, min_val, max_val):
+    """
+    Prompts the user for an integer input within a specified range.
+
+    Args:
+    prompt (str): The prompt message to display to the user.
+    min_val (int): The minimum allowable value (inclusive).
+    max_val (int): The maximum allowable value (inclusive).
+
+    Returns:
+    int: The user's input if it's within the specified range.
+    """
+    while True:
+        try:
+            value = int(input(prompt))
+            if min_val <= value <= max_val:
+                return value
+            else:
+                print(Fore.RED + f"Value must be between {min_val} and {max_val}. Try again." + Style.RESET_ALL)
+        except ValueError:
+            print(Fore.RED + "Invalid input. Please enter a valid integer." + Style.RESET_ALL)
+
+
+def is_reduced_echelon_form(matrix, rows, columns):
+    """
+    Checks if a matrix is in Reduced Row Echelon Form (RREF).
+
+    Args:
+    matrix (list of lists): The matrix to check.
+    rows (int): Number of rows in the matrix.
+    columns (int): Number of columns in the matrix.
+
+    Returns:
+    bool: True if the matrix is in RREF, False otherwise.
+    """
+    last_nonzero_column = -1  # Track the position of the last non-zero column
+
+    for current_row in range(rows):
+        current_column = 0
+        # Find the first non-zero entry in the current row
+        while current_column < columns and matrix[current_row][current_column] == 0:
+            current_column += 1
+
+        # Ensure each leading 1 is to the right of the leading 1 in the previous row
+        if current_column <= last_nonzero_column and current_column < columns:
+            return False
+
+        last_nonzero_column = current_column
+
+        # Ensure that all entries in the current column, except the leading 1, are zero
+        if current_column < columns:
+            for other_row in range(rows):
+                if other_row != current_row and matrix[other_row][current_column] != 0:
+                    return False
+
+    return True
+
+
+def print_matrix(matrix):
+    """
+    Prints the matrix with a specific color format for better visualization.
+
+    Args:
+    matrix (list of lists): The matrix to print.
+    """
+    print(Fore.LIGHTYELLOW_EX)
+    for row in matrix:
+        print(row)
+    print(Style.RESET_ALL)
+
+
+def make_matrix(matrix, rows, columns, k, count):
+    """
+    Recursively generates all possible matrices and counts how many are in RREF.
+
+    Args:
+    matrix (list of lists): The current state of the matrix.
+    rows (int): Number of rows in the matrix.
+    columns (int): Number of columns in the matrix.
+    k (int): The current index in the matrix (used for recursion).
+    count (int): The current count of matrices that are in RREF.
+
+    Returns:
+    int: The updated count of RREF matrices.
+    """
+    if k >= rows * columns:
+        return count
+
+    for i in range(2):  # Loop through 0 and 1 (possible entries in Z2)
+        matrix[k // columns][k % columns] = i
+        if k == rows * columns - 1:  # If this is the last element to fill
+            if is_reduced_echelon_form(matrix, rows, columns):
+                count += 1
+                print(Fore.CYAN + f"Solution number: {count} is:" + Style.RESET_ALL)
+                print_matrix(matrix)
+        else:
+            count = make_matrix(matrix, rows, columns, k + 1, count)
+
+    return count
+
+
+def main():
+    """
+    Main function to interact with the user, generate matrices, and count how many are in RREF.
+    """
+    try:
+        # Get the dimensions m (rows) and n (columns) from the user
+        m = get_input_value(
+            Fore.LIGHTBLUE_EX + "Enter value for m " + Fore.RED + "(2 <= m <= 5)" + Fore.LIGHTBLUE_EX + " >>>> ", 2, 5)
+        n = get_input_value(
+            Fore.LIGHTBLUE_EX + "Enter value for n " + Fore.RED + "(2 <= n <= 5)" + Fore.LIGHTBLUE_EX + " >>>> ", 2, 5)
+
+        # Initialize the matrix with zeros
+        matrix_echelon = [[0] * n for _ in range(m)]
+
+        # Start the timer
+        start_time = time.time()
+
+        # Generate matrices and count how many are in RREF
+        number_of_reduced_matrices = make_matrix(matrix_echelon, m, n, 0, 0)
+
+        # End the timer
+        end_time = time.time()
+
+        # Display the results
+        print(
+            Fore.LIGHTBLUE_EX + f"The number of reduced echelon form matrices for m = {m} and n = {n} is {number_of_reduced_matrices}. "
+                                f"Solutions were printed in {int((end_time - start_time) // 60)} minutes and "
+                                f"{int((end_time - start_time) % 60)} seconds." + Style.RESET_ALL)
+    except ValueError:
+        print(Fore.RED + "Invalid input! Please enter a valid integer." + Style.RESET_ALL)
+
+
+if __name__ == "__main__":
+    main()

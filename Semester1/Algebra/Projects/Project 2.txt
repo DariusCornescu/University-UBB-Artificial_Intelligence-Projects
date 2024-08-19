@@ -1,0 +1,65 @@
+import itertools
+
+def is_associative(operation_table, n):
+    """
+    Check if the operation table is associative.
+
+    Args:
+    operation_table (list of lists): The operation table to check.
+    n (int): The size of the set.
+
+    Returns:
+    bool: True if the operation table is associative, False otherwise.
+    """
+    elements = range(n)
+    for a, b, c in itertools.product(elements, repeat=3):
+        if operation_table[operation_table[a][b]][c] != operation_table[a][operation_table[b][c]]:
+            return False
+    return True
+
+def generate_operation_tables(n):
+    """
+    Generate all associative operation tables for a set of size n.
+
+    Args:
+    n (int): The size of the set.
+
+    Returns:
+    list of lists: List of associative operation tables.
+    """
+    elements = list(range(n))
+    all_operations = itertools.product(elements, repeat=n*n)
+    associative_operations = []
+
+    for operation in all_operations:
+        operation_table = [list(operation[i*n:(i+1)*n]) for i in range(n)]
+        if is_associative(operation_table, n):
+            associative_operations.append(operation_table)
+
+    return associative_operations
+
+def main():
+    """
+    Main function to interact with the user and print all associative operation tables for a set of size n.
+    """
+    try:
+        n = int(input("Enter a non-zero natural number n (n ≤ 4): "))
+        if n < 1 or n > 4:
+            print("Invalid input. Please enter a value for n between 1 and 4.")
+            return
+
+        associative_operations = generate_operation_tables(n)
+        print(f"The number of associative operations on a set A = {{a1, a2, ..., a{n}}} is {len(associative_operations)}.")
+
+        print("The operation tables of each associative operation:")
+        for idx, operation_table in enumerate(associative_operations, 1):
+            print(f"Operation {idx}:")
+            for row in operation_table:
+                print(row)
+            print()
+
+    except ValueError:
+        print("Invalid input. Please enter a valid integer.")
+
+if __name__ == "__main__":
+    main()

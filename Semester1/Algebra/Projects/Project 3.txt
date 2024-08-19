@@ -1,0 +1,81 @@
+import itertools
+
+
+def is_linearly_independent(vectors):
+    """
+    Check if a given set of vectors is linearly independent in the vector space Z_2^n over Z_2.
+
+    Args:
+    vectors (list of tuples): List of vectors to check for linear independence.
+
+    Returns:
+    bool: True if the vectors are linearly independent, False otherwise.
+    """
+    num_vectors = len(vectors)
+    dimension = len(vectors[0])
+
+    # Iterate over all possible linear combinations of the vectors
+    for combination in itertools.product([0, 1], repeat=num_vectors):
+        if sum(combination) == 0:
+            continue  # Skip the trivial combination where all coefficients are zero
+
+        # Calculate the linear combination of the vectors
+        linear_combination = [0] * dimension
+        for coeff, vector in zip(combination, vectors):
+            linear_combination = [
+                (lc + coeff * component) % 2
+                for lc, component in zip(linear_combination, vector)
+            ]
+
+        # Check if the linear combination results in the zero vector
+        if linear_combination == [0] * dimension:
+            return False
+
+    return True
+
+
+def generate_bases(n):
+    """
+    Generate all possible bases for the vector space Z_2^n over Z_2.
+
+    Args:
+    n (int): Dimension of the vector space.
+
+    Returns:
+    list of tuples: List of all possible bases.
+    """
+    vectors = list(itertools.product([0, 1], repeat=n))
+    bases = set()
+
+    # Check all combinations of n vectors to see if they form a basis
+    for candidate in itertools.combinations(vectors, n):
+        if candidate[0] != (0,) * n and is_linearly_independent(candidate):
+            # Add all permutations of the basis to the set
+            for perm in itertools.permutations(candidate):
+                bases.add(perm)
+
+    return list(bases)
+
+
+def main():
+    """
+    Main function to interact with the user and print all possible bases for Z_2^n.
+    """
+    try:
+        n = int(input("Enter a non-zero natural number n (n ≤ 4): "))
+        if n < 1 or n > 4:
+            print("Invalid input. Please enter a value for n between 1 and 4.")
+            return
+
+        bases = generate_bases(n)
+        print(f"\nThe number of bases of the vector space Z_2^{n} over Z_2 is {len(bases)}.\n")
+        print("The vectors of each such basis are:")
+        for idx, basis in enumerate(bases, 1):
+            print(f"Basis {idx}: {basis}")
+
+    except ValueError:
+        print("Invalid input. Please enter a valid integer.")
+
+
+if __name__ == "__main__":
+    main()

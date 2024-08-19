@@ -1,0 +1,98 @@
+import itertools
+from sympy import symbols
+
+
+def partitions(set_):
+    """
+    Generates all possible partitions of a given set.
+
+    Args:
+    set_ (list): The set to partition.
+
+    Yields:
+    list: A partition of the input set.
+    """
+    if not set_:
+        yield []
+        return
+
+    # Iterate through all possible ways to partition the set
+    for i in range(2 ** (len(set_) - 1)):
+        parts = [[], []]  # Two empty lists to store the partition
+        for item in set_:
+            parts[i & 1].append(item)  # Append item to one of the parts
+            i >>= 1  # Bitwise shift to determine the partitioning
+        # Recursively partition the second part
+        for b in partitions(parts[1]):
+            yield [parts[0]] + b
+
+
+def equivalence_relation(partition, elements):
+    """
+    Constructs the equivalence relation corresponding to a given partition.
+
+    Args:
+    partition (list of lists): A partition of a set.
+    elements (list): The original set of elements.
+
+    Returns:
+    set: A set of pairs representing the equivalence relation.
+    """
+    relation = set()
+    for subset in partition:
+        # Add all pairs of elements from the same subset to the relation
+        for pair in itertools.product(subset, repeat=2):
+            relation.add(pair)
+    return relation
+
+
+def bell_number(n):
+    """
+    Computes the Bell number for a given integer n.
+    (Note: This function contains an error and is not used in the main logic.)
+
+    Args:
+    n (int): The integer to compute the Bell number for.
+
+    Returns:
+    int: The Bell number for the given n.
+    """
+    bell = [0] * (n + 1)
+    bell[0] = 1
+    for i in range(1, n + 1):
+        bell[i] = 0
+        for j in range(i):
+            bell[i] += bell[j] * itertools.combinations(i - 1, j)
+    return bell[n]
+
+
+def main():
+    """
+    Main function to interact with the user, generate partitions of a set,
+    and compute the corresponding equivalence relations.
+    """
+    # Step 1: Get user input
+    n = int(input("Enter a non-zero natural number n (n ≤ 8): "))
+    if n < 1 or n > 8:
+        print("Invalid input. Please enter a value for n between 1 and 8.")
+        return
+
+    # Step 2: Generate elements of the set A
+    elements = list(symbols(f'a1:{n + 1}'))
+    print(f"Set A: {elements}")
+
+    # Step 3: Count and display the number of partitions
+    num_partitions = sum(1 for _ in partitions(elements))
+    print(f"The number of partitions on the set A = {elements} is {num_partitions}")
+
+    # Step 4: List all partitions and their corresponding equivalence relations
+    print("Partitions and their corresponding equivalence relations:")
+    for part in partitions(elements):
+        print(f"Partition: {part}")
+        equiv_rel = equivalence_relation(part, elements)
+        print(f"Equivalence relation: {equiv_rel}")
+        print("-" * 40)
+
+
+if __name__ == "__main__":
+    main()
